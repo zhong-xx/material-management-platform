@@ -7,4 +7,8 @@ export default {
     getMaterialMessage: '/material/getMaterialMessage',
     // 编辑物资信息
     updateMaterialMessage: '/material/updateMaterialMessage',
+    // 删除物资
+    deleteMaterial: '/material/deleteMaterial',
+    // 查询物资
+    selectMatrials: '/material/selectMatrials',
 }

@@ -6,14 +6,14 @@
             规格/型号：
             <el-input
               placeholder="请输入规格/型号"
-              v-model="standard"
+              v-model="select.model"
               clearable>
             </el-input>
           </div>
           <div class="right">
             <div>
               是否有效：
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="select.isEffective" placeholder="请选择">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -23,7 +23,7 @@
               </el-select>
             </div>
             <div class="button-container">
-              <el-button type="primary">查询</el-button>
+              <el-button type="primary" @click="selectMatrials">查询</el-button>
               <el-button>重置</el-button>
             </div>
           </div>
@@ -34,7 +34,7 @@
     <div class="container">
       <div class="operation-container">
         <el-button type="primary" @click="addMaterial">新增</el-button>
-        <el-button type="danger">删除</el-button>
+        <el-button type="danger" @click="deleteMaterial">删除</el-button>
       </div>
 
       <el-table
@@ -113,9 +113,7 @@ export default {
     },
     data () {
       return {
-        // 规格/型号
-        standard: '',
-        // select选择器可选值
+        // 选择器可选值
         options: [{
           value: '是',
           label: '是'
@@ -123,8 +121,13 @@ export default {
           value: '否',
           label: '否'
         }],
-        // select选择器最终值
-        value: '',
+        select: {
+          // 规格/型号
+          model: '',
+            // 选择器最终值
+          isEffective: '',
+        },
+
         // 显示的数据
         tableData: [],
         multipleSelection: [],
@@ -134,16 +137,32 @@ export default {
       }
     },
     methods: {
-      // 清空所选选项
-      toggleSelection() {
-        this.$refs.multipleTable.clearSelection();
+      async selectMatrials () {
+        let res = await this.$axios.get('/materialApi'+ materialApi.selectMatrials, {
+          params: {
+            model: select.model,
+            isEffective: select.isEffective,
+          }
+        });
+        let { code, msg, data } = res.data;
+        if(code === '0000') {
+          this.count = data.count;
+          this.tableData = data.data;
+        }
       },
+      // 清空所选选项
+      // toggleSelection() {
+      //   this.$refs.multipleTable.clearSelection();
+      // },
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
+      // 每页大小变化时
       handleSizeChange(val) {
         this.size = val;
+        this.handleCurrentChange(this.currentPage);
       },
+      // 显示当前页
       async handleCurrentChange(val) {
         let res = await this.$axios.get('/materialApi'+ materialApi.getMaterialsMessage, {
           params: {
@@ -163,11 +182,23 @@ export default {
       },
       modifyRow(index, rows) {
         this.$router.push(`/modifyMaterial/${this.type}/${rows[index]._id}`)
+      },
+      // 删除物资
+      async deleteMaterial () {
+        let res = await this.$axios.post('/materialApi'+ materialApi.deleteMaterial, {
+          messageList: this.multipleSelection
+        });
+        let { code, msg } = res.data;
+        if(code=== '0000') {
+          this.$message({type: 'success', message: msg});
+          this.handleCurrentChange(this.currentPage);
+        }
       }
     },
     watch: {
       '$route' (to, from) {
         if(from.path.indexOf('/modifyMaterial') !== -1) {
+          // 当修改完成后，需要显示更新后的数据
           this.handleCurrentChange(this.currentPage);
         } else {
           this.handleCurrentChange(1);
