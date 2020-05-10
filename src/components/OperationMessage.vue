@@ -240,6 +240,11 @@ export default {
 
             .close {
                 color: gray;
+                cursor: pointer;
+
+                &:hover {
+                    color: rgb(54, 54, 231);
+                }
             }
         }
 

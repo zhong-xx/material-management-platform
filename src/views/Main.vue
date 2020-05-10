@@ -13,9 +13,11 @@
     <el-main>
         <router-view></router-view>
     </el-main>
+
     <router-view name='add'>
       新增物资
     </router-view>
+
     <router-view name='modify'>
       修改物资
       <div class="row-container" slot="time" slot-scope="slot">
@@ -23,7 +25,6 @@
             <el-input v-model="slot.data"  :disabled="slot.data"></el-input>
         </el-form-item>
       </div>
-      <!--  v-model="ruleForm.time" -->
     </router-view>
   </el-container>
 </template>
@@ -97,8 +98,10 @@ export default {
       box-sizing: border-box;
     }
 
-    .el-input {
-      width: 280px;
+    .row-container {
+      .el-input {
+        width: 280px;
+      }
     }
 }
 </style>
