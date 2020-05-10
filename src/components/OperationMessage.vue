@@ -9,7 +9,7 @@
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
               <div class="row-container">
                   <el-form-item label="物资品名 :" prop='name'>
-                      <el-input v-model="ruleForm.name" :disabled="forbid"></el-input>
+                      <el-input v-model="ruleForm.name" :disabled="forbid" placeholder="请输入物资品名"></el-input>
                   </el-form-item>
                   <el-form-item label="物资类别 :">
                       <el-select v-model="ruleForm.itemType" placeholder="请选择物资类别" :disabled="forbid">
@@ -23,10 +23,10 @@
               </div>
               <div class="row-container">
                   <el-form-item label="计量单位 :">
-                      <el-input v-model="ruleForm.unit"  :disabled="forbid"></el-input>
+                      <el-input v-model="ruleForm.unit"  :disabled="forbid" placeholder="请输入计量单位"></el-input>
                   </el-form-item>
                   <el-form-item label="规格/型号 :" prop='model'>
-                      <el-input v-model="ruleForm.model"></el-input>
+                      <el-input v-model="ruleForm.model" placeholder="请输入规格/型号"></el-input>
                   </el-form-item>
               </div>
               <div class="row-container">
@@ -45,20 +45,20 @@
               </div>
               <div class="row-container">
                   <el-form-item label="排序 :" prop='sort'>
-                      <el-input v-model="ruleForm.sort"></el-input>
+                      <el-input v-model="ruleForm.sort" placeholder="请输入排序"></el-input>
                   </el-form-item>
                   <el-form-item label="重量 :">
-                      <el-input v-model="ruleForm.weight"></el-input>
+                      <el-input v-model="ruleForm.weight" placeholder="请输入重量"></el-input>
                   </el-form-item>
               </div>
               <div class="row-container">
                   <el-form-item label="体积 :">
-                      <el-input v-model="ruleForm.volume"></el-input>
+                      <el-input v-model="ruleForm.volume" placeholder="请输入体积"></el-input>
                   </el-form-item>
               </div>
-              <div class="row-container">
+              <div>
                   <el-form-item label="物资用途 :">
-                      <el-input type="textarea" v-model="ruleForm.purpose"></el-input>
+                      <el-input type="textarea" v-model="ruleForm.purpose" placeholder="请输入物资用途"></el-input>
                   </el-form-item>
               </div>
               <slot name='time' :data="ruleForm.time"></slot>
@@ -258,10 +258,6 @@ export default {
 
                 .el-input,.el-select {
                     width: 280px;
-                }
-
-                .el-input[type='textarea'] {
-                    width: 100%;
                 }
             }
         }

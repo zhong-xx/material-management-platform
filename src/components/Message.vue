@@ -13,7 +13,7 @@
           <div class="right">
             <div>
               是否有效：
-              <el-select v-model="select.isEffective" placeholder="请选择">
+              <el-select v-model="select.isEffective" placeholder="请选择是否有效">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
@@ -24,7 +24,7 @@
             </div>
             <div class="button-container">
               <el-button type="primary" @click="selectMatrials">查询</el-button>
-              <el-button>重置</el-button>
+              <el-button @click="reset">重置</el-button>
             </div>
           </div>
       </div>
@@ -35,6 +35,11 @@
       <div class="operation-container">
         <el-button type="primary" @click="addMaterial">新增</el-button>
         <el-button type="danger" @click="deleteMaterial">删除</el-button>
+      </div>
+
+      <div class="now-select" v-show="isShow">
+        <div>已选择<span> {{selectedNum}} </span>项</div>
+        <div class="clear" @click="toggleSelection">清空</div>
       </div>
 
       <el-table
@@ -133,29 +138,40 @@ export default {
         multipleSelection: [],
         currentPage: 1,
         size: 4,
-        count: 0
+        count: 0,
+        // 被选个数
+        selectedNum: 0,
+        // 是否显示被选个数信息
+        isShow: false,
+        // 是否是上面的条件查询
+        conditionSelect: false
       }
     },
     methods: {
+      // 查询
       async selectMatrials () {
-        let res = await this.$axios.get('/materialApi'+ materialApi.selectMatrials, {
-          params: {
-            model: select.model,
-            isEffective: select.isEffective,
-          }
-        });
-        let { code, msg, data } = res.data;
-        if(code === '0000') {
-          this.count = data.count;
-          this.tableData = data.data;
-        }
+        this.conditionSelect = true;
+        this.handleCurrentChange(1);
+      },
+      // 重置
+      reset () {
+        this.select.model = '';
+        this.select.isEffective = '';
+        this.conditionSelect = false;
+        this.handleCurrentChange(1);
       },
       // 清空所选选项
-      // toggleSelection() {
-      //   this.$refs.multipleTable.clearSelection();
-      // },
+      toggleSelection() {
+        this.$refs.multipleTable.clearSelection();
+      },
       handleSelectionChange(val) {
         this.multipleSelection = val;
+        this.selectedNum = this.multipleSelection.length;
+        if(this.selectedNum > 0) {
+          this.isShow = true;
+        } else {
+          this.isShow = false;
+        }
       },
       // 每页大小变化时
       handleSizeChange(val) {
@@ -164,6 +180,24 @@ export default {
       },
       // 显示当前页
       async handleCurrentChange(val) {
+        this.currentPage = val;
+        if(this.conditionSelect) {
+          let res = await this.$axios.get('/materialApi'+ materialApi.selectMatrials, {
+            params: {
+              itemType: this.type,
+              model: this.select.model,
+              isEffective: this.select.isEffective,
+              size: this.size,
+              page: this.currentPage
+            }
+          });
+          let { code, msg, data } = res.data;
+          if(code === '0000') {
+            this.count = data.count;
+            this.tableData = data.data;
+          }
+          return;
+        }
         let res = await this.$axios.get('/materialApi'+ materialApi.getMaterialsMessage, {
           params: {
             size: this.size,
@@ -200,9 +234,14 @@ export default {
         if(from.path.indexOf('/modifyMaterial') !== -1) {
           // 当修改完成后，需要显示更新后的数据
           this.handleCurrentChange(this.currentPage);
-        } else {
-          this.handleCurrentChange(1);
-        }
+        } 
+        if(from.path.indexOf('/addMaterial') !== -1) {
+          // 当修改完成后，需要显示更新后的数据
+          this.handleCurrentChange(this.currentPage);
+        } 
+      },
+      type () {
+        this.handleCurrentChange(1);
       }
     }
 }
@@ -214,7 +253,6 @@ export default {
     border-radius: 5px;
     padding: 10px;
     box-sizing: border-box;
-    min-width: 800px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
     height: calc(100%);
 
@@ -239,6 +277,32 @@ export default {
     .container {
       display: flex;
       flex-direction: column;
+
+      .now-select {
+        height: 40px;
+        background: rgb(28, 173, 218);
+        margin-top: 10px;
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+
+        div {
+          margin: 0 20px;
+          font-size: 14px;
+
+          span {
+            color: rgb(26, 91, 212);
+          }
+        }
+
+        .clear {
+          color: rgb(26, 91, 212);
+
+          &:hover {
+            color: white;
+          }
+        }
+      }
 
       .block {
         align-self: flex-end;

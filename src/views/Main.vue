@@ -96,6 +96,7 @@ export default {
     .el-main {
       padding-top: 10px;
       box-sizing: border-box;
+      min-width: 1100px;
     }
 
     .row-container {
