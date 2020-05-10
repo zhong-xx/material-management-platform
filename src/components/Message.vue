@@ -192,7 +192,7 @@ export default {
       justify-content: space-between;
       margin: 15px 15px;
 
-      .el-input {
+      .el-input, .el-select {
         width: 280px;
       }
       

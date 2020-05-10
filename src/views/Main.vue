@@ -20,7 +20,7 @@
       修改物资
       <div class="row-container" slot="time" slot-scope="slot">
         <el-form-item label="创建时间 :">
-            <el-input v-model="slot.data"></el-input>
+            <el-input v-model="slot.data"  :disabled="slot.data"></el-input>
         </el-form-item>
       </div>
       <!--  v-model="ruleForm.time" -->

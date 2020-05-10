@@ -8,11 +8,11 @@
 
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
               <div class="row-container">
-                  <el-form-item label="物资名称 :" prop='name'>
-                      <el-input v-model="ruleForm.name"></el-input>
+                  <el-form-item label="物资品名 :" prop='name'>
+                      <el-input v-model="ruleForm.name" :disabled="forbid"></el-input>
                   </el-form-item>
                   <el-form-item label="物资类别 :">
-                      <el-select v-model="ruleForm.itemType" placeholder="请选择物资类别">
+                      <el-select v-model="ruleForm.itemType" placeholder="请选择物资类别" :disabled="forbid">
                         <el-option label="居住类" value="居住类"></el-option>
                         <el-option label="床上用品类" value="床上用品类"></el-option>
                         <el-option label="衣着类" value="衣着类"></el-option>
@@ -23,7 +23,7 @@
               </div>
               <div class="row-container">
                   <el-form-item label="计量单位 :">
-                      <el-input v-model="ruleForm.unit"></el-input>
+                      <el-input v-model="ruleForm.unit"  :disabled="forbid"></el-input>
                   </el-form-item>
                   <el-form-item label="规格/型号 :" prop='model'>
                       <el-input v-model="ruleForm.model"></el-input>
@@ -85,10 +85,12 @@ export default {
         }
         if(this.$route.path.indexOf('/modifyMaterial') !== -1) {
             this.getMaterialMessage();
+            this.forbid = true;
         }
     },
     data () {
         return {
+            forbid: false,
             ruleForm: {
                 // 物资品名
                 name: '',
