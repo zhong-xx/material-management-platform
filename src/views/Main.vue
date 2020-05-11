@@ -84,7 +84,7 @@ export default {
     height: 100%;
 
     .el-aside {
-      padding-top: 10px;
+      padding-top: 20px;
       padding-left: 20px;
       box-sizing: border-box;
 
@@ -94,7 +94,6 @@ export default {
     }
 
     .el-main {
-      padding-top: 10px;
       box-sizing: border-box;
       min-width: 1100px;
     }

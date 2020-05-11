@@ -11,5 +11,10 @@ export default {
 <style lang="less">
 html,body {
   height: 100%;
+  overflow: hidden;
+}
+* {
+  margin: 0;
+  padding: 0;
 }
 </style>
