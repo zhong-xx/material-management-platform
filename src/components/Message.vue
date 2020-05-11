@@ -58,6 +58,7 @@
         <el-table-column
           type="index"
           :index="num"
+          label="序号"
           width="50">
         </el-table-column>
         <el-table-column
