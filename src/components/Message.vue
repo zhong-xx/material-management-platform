@@ -1,41 +1,44 @@
 <template>
   <div class="message">
     <!-- 查找部分 开始 -->
-      <div class="select-container">
-          <div>
-            规格/型号：
-            <el-input
-              placeholder="请输入规格/型号"
-              v-model="select.model"
-              clearable>
-            </el-input>
-          </div>
-          <div class="right">
-            <div>
-              是否有效：
-              <el-select v-model="select.isEffective" placeholder="请选择是否有效">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </div>
-            <div class="button-container">
-              <el-button type="primary" @click="selectMatrials">查询</el-button>
-              <el-button @click="reset">重置</el-button>
-            </div>
-          </div>
+    <el-form :model="select" ref="ruleForm" label-width="100px" class="demo-ruleForm select-container">
+      <el-form-item label="规格/型号 :">
+          <el-input v-model="select.model" placeholder="请输入规格/型号"></el-input>
+      </el-form-item>
+      <div class="right">
+        <el-form-item label="是否有效 :">
+          <el-select v-model="select.isEffective" placeholder="请选择是否有效">
+            <el-option label="是" value="是"></el-option>
+            <el-option label="否" value="否"></el-option>
+          </el-select>
+        </el-form-item>
+        <div class="button-container">
+          <el-button type="primary" @click="selectMatrials">查询</el-button>
+          <el-button @click="reset">重置</el-button>
+        </div>
       </div>
+    </el-form>
     <!-- 查找部分 完 -->
 
     <!-- 信息展示 开始-->
     <div class="container">
       <div class="operation-container">
         <el-button type="primary" @click="addMaterial">新增</el-button>
-        <el-button type="danger" @click="deleteMaterial">删除</el-button>
+        <el-button type="danger" @click="toDelete">删除</el-button>
+        <!-- <el-button type="danger" @click="deleteMaterial">删除</el-button> -->
       </div>
+
+      <el-dialog
+        title="提示"
+        :visible.sync="dialogVisible"
+        width="30%"
+        :before-close="handleClose">
+        <span>确定删除</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="deleteMaterial">确 定</el-button>
+        </span>
+      </el-dialog>
 
       <div class="now-select" v-show="isShow">
         <div>已选择<span> {{selectedNum}} </span>项</div>
@@ -51,6 +54,11 @@
         <el-table-column
           type="selection"
           width="55">
+        </el-table-column>
+        <el-table-column
+          type="index"
+          :index="num"
+          width="50">
         </el-table-column>
         <el-table-column
           prop="name"
@@ -118,14 +126,8 @@ export default {
     },
     data () {
       return {
-        // 选择器可选值
-        options: [{
-          value: '是',
-          label: '是'
-        }, {
-          value: '否',
-          label: '否'
-        }],
+        // 删除的对话框是否显示
+        dialogVisible: false,
         select: {
           // 规格/型号
           model: '',
@@ -135,12 +137,18 @@ export default {
 
         // 显示的数据
         tableData: [],
+        // 已选的数据
         multipleSelection: [],
+        // 当前页数
         currentPage: 1,
+        // 每页大小
         size: 4,
+        // 总共多少个
         count: 0,
         // 被选个数
         selectedNum: 0,
+        // 顺序
+        num: 1,
         // 是否显示被选个数信息
         isShow: false,
         // 是否是上面的条件查询
@@ -159,6 +167,15 @@ export default {
         this.select.isEffective = '';
         this.conditionSelect = false;
         this.handleCurrentChange(1);
+      },
+      toDelete () {
+        if(this.multipleSelection.length > 0) {
+          this.dialogVisible = true;
+        }
+      },
+      // 删除的对话框：关闭
+      handleClose() {
+        this.dialogVisible = false;
       },
       // 清空所选选项
       toggleSelection() {
@@ -181,6 +198,7 @@ export default {
       // 显示当前页
       async handleCurrentChange(val) {
         this.currentPage = val;
+        this.num = (this.currentPage-1)*this.size+1;
         if(this.conditionSelect) {
           let res = await this.$axios.get('/materialApi'+ materialApi.selectMatrials, {
             params: {
@@ -227,6 +245,7 @@ export default {
       },
       // 删除物资
       async deleteMaterial () {
+        this.dialogVisible = false;
         let res = await this.$axios.post('/materialApi'+ materialApi.deleteMaterial, {
           messageList: this.multipleSelection
         });
@@ -279,6 +298,10 @@ export default {
         flex-direction: column;
         justify-content: space-between;
         margin-right: 100px;
+
+        .button-container {
+          margin-left: 24px;
+        }
       }
     }
 
