@@ -195,6 +195,10 @@ export default {
           if(code === '0000') {
             this.count = data.count;
             this.tableData = data.data;
+            // 当前页减1
+            if(data.reduce) {
+              this.currentPage--;
+            }
           }
           return;
         }
@@ -209,6 +213,10 @@ export default {
         if(code === '0000') {
           this.count = data.count;
           this.tableData = data.data;
+          // 当前页减1
+          if(data.reduce) {
+            this.currentPage--;
+          }
         }
       },
       addMaterial () {
